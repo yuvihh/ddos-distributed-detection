@@ -5,8 +5,12 @@
 
 <mapper namespace="detection.dao.AttackDao">
     <insert id="insert" parameterType="Attack" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO attack
-        (src_ip, detected_time)
-        VALUES (#{srcIp}, #{detectedTime});
+        INSERT IGNORE INTO attack (src_ip, detected_time)
+        SELECT #{srcIp}, #{detectedTime}
+        FROM dual
+        WHERE NOT EXISTS(
+            SELECT *
+            FROM attack
+            WHERE src_ip = #{srcIp});
     </insert>
 </mapper>

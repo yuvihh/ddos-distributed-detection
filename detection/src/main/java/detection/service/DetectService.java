@@ -16,40 +16,45 @@ import java.time.Instant;
 public class DetectService {
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final int PACKETS_THRESHOLD = 90;
+    private final int PACKETS_THRESHOLD = 0;
+
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int NUM_ALERT_THRESHOLD = 5;
 
     @Autowired
     private FlowInfoDao flowInfoDao;
 
     @Autowired
-    private AlertCountService alertCountService;
+    private AttackDao attackDao;
 
     @Autowired
-    private AttackDao attackDao;
+    private AlertCountService alertCountService;
 
     @RabbitListener(queues = "flow-info")
     public void detect(FlowInfo flowInfo) {
-        log.info("[x] receive '" + flowInfo + "'");
+        log.info("detect: " + flowInfo + "'");
 
         flowInfoDao.insert(flowInfo);
-        log.info("[x] insert: " + flowInfo);
 
-        boolean alert = flowInfo.getForwardPackets() > PACKETS_THRESHOLD;
-        log.info("[x] detect " + alert);
+        if (flowInfo.getForwardPackets() > PACKETS_THRESHOLD) {
+            log.info("alert: " + flowInfo.getSrcIp());
 
-        if (alert) {
-            boolean isAttack = alertCountService.alertCount(flowInfo);
-            if (isAttack) {
+            long numAlert = alertCountService.alertCount(flowInfo);
+            log.info("num of alert: " + numAlert);
+
+            if (numAlert > NUM_ALERT_THRESHOLD) {
                 Attack attack = Attack.builder()
                         .srcIp(flowInfo.getSrcIp())
                         .detectedTime(Instant.now())
                         .build();
+
                 attackDao.insert(attack);
+                if (attack.getId() != null) {
+                    log.info("[x] insert attack: " + attack);
+                } else {
+                    log.info("attack from " + attack.getSrcIp() + " has already been logged.");
+                }
             }
         }
-
-
-
-
     }
 }
