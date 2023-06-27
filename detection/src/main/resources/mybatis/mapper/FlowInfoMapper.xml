@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="detection.dao.FlowInfoDao">
+    <insert id="insert" parameterType="FlowInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO flow
+        (timestamp, src_ip, src_port, dst_ip, dst_port, protocol, flow_duration,
+         forward_packets, forward_bytes, backward_packets, backward_bytes)
+        VALUES (#{timestamp}, #{srcIp}, #{srcPort}, #{dstIp}, #{dstPort}, #{protocol}, #{flowDuration},
+                #{forwardPackets}, #{forwardBytes}, #{backwardPackets}, #{backwardBytes});
+    </insert>
+</mapper>

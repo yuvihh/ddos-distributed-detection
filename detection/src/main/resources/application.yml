@@ -1,0 +1,22 @@
+dubbo:
+  application:
+    name: detection
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: zookeeper://172.17.0.2:2181
+
+spring:
+  rabbitmq:
+    host: 172.17.0.3
+
+  datasource:
+    username: root
+    password: 1234
+    url: jdbc:mysql://172.17.0.4:3306/ddos_detection
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:/mybatis/mapper/*.xml
+  config-location: classpath:/mybatis/config/mybatis-config.xml
