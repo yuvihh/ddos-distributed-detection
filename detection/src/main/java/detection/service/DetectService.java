@@ -19,7 +19,7 @@ public class DetectService {
     private final int PACKETS_THRESHOLD = 0;
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final int NUM_ALERT_THRESHOLD = 5;
+    private final int ALERTS_THRESHOLD = 5;
 
     @Autowired
     private FlowInfoDao flowInfoDao;
@@ -39,10 +39,10 @@ public class DetectService {
         if (flowInfo.getForwardPackets() > PACKETS_THRESHOLD) {
             log.info("alert: " + flowInfo.getSrcIp());
 
-            long numAlert = alertCountService.alertCount(flowInfo);
-            log.info("num of alert: " + numAlert);
+            long alerts = alertCountService.alertCount(flowInfo);
+            log.info("num of alert: " + alerts);
 
-            if (numAlert > NUM_ALERT_THRESHOLD) {
+            if (alerts > ALERTS_THRESHOLD) {
                 Attack attack = Attack.builder()
                         .srcIp(flowInfo.getSrcIp())
                         .detectedTime(Instant.now())

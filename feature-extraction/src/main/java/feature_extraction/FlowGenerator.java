@@ -5,9 +5,8 @@ import detection_interface.FiveTuple;
 import detection_interface.FlowInfo;
 import inet.ipaddr.ipv4.IPv4Address;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -15,17 +14,24 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
+@Slf4j
 @Data
 public class FlowGenerator {
 
     private static final int MAX_PORT_NUMBER = 65535;
-    private final Logger logger = LoggerFactory.getLogger(FlowGenerator.class);
+
     private int minFlowDuration = 10;
+
     private int maxFlowDuration = 10000;
+
     private int minPacketsPerSecond = 1;
+
     private int maxPacketsPerSecond = 100;
+
     private int minBytesPerPacket = 1;
+
     private int maxBytesPerPacket = 100;
+
     @DubboReference
     private DetectionService detectionService;
 
@@ -68,7 +74,7 @@ public class FlowGenerator {
         while (true) {
             for (int i = 0; i < num; i++) {
                 FiveTuple fiveTuple = fiveTuples[i];
-
+                int duration = random.nextInt(minFlowDuration, maxFlowDuration);
                 int packetsPerSecond = random.nextInt(minPacketsPerSecond, maxPacketsPerSecond);
                 int bytesPerPacket = random.nextInt(minBytesPerPacket, maxBytesPerPacket);
                 int bytesPerSecond = bytesPerPacket * packetsPerSecond;
@@ -80,14 +86,14 @@ public class FlowGenerator {
                         .dstIp(fiveTuple.dstIp())
                         .dstPort(fiveTuple.dstPort())
                         .protocol(fiveTuple.protocol())
-                        .flowDuration(random.nextInt(minFlowDuration, maxFlowDuration))
+                        .flowDuration(duration)
                         .forwardPackets(packetsPerSecond)
                         .forwardBytes(bytesPerSecond)
                         .backwardPackets(packetsPerSecond)
                         .backwardBytes(bytesPerSecond)
                         .build();
 
-                logger.info(flowInfo.toString());
+                log.info(flowInfo.toString());
                 detectionService.detectFlow(flowInfo);
 
                 int interval = (int) (random.nextDouble(minInterval, maxInterval) * 1000);

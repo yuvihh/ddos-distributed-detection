@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @Slf4j
 public class DetectController {
+
     @Autowired
     private DetectService detectService;
 

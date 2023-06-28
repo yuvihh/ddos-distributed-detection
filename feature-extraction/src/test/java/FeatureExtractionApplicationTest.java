@@ -10,8 +10,8 @@ public class FeatureExtractionApplicationTest {
     }
 
     @Test
-    public void test_generate_flow() {
+    public void test_generate_flow() throws InterruptedException {
         FlowGenerator flowGenerator = new FlowGenerator();
-        flowGenerator.generate(10, 1);
+        flowGenerator.generate(1, 1);
     }
 }

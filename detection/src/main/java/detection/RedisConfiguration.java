@@ -19,12 +19,12 @@ public class RedisConfiguration {
     }
 
     @Bean
-    RedisSerializer<String> redisSerializer() {
+    public RedisSerializer<String> redisSerializer() {
         return new StringRedisSerializer();
     }
 
     @Bean
-    RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory, RedisSerializer<String> redisSerializer) {
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory, RedisSerializer<String> redisSerializer) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
         template.setKeySerializer(redisSerializer);
